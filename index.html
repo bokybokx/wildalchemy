@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poop Escape Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .game-wrapper {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .leaderboard {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 250px;
+        }
+        
+        .leaderboard h2 {
+            margin: 0 0 15px 0;
+            color: #333;
+            text-align: center;
+            font-size: 24px;
+        }
+        
+        .leaderboard-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .leaderboard-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .score-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .score-image {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+        
+        .leaderboard-item.first {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            font-size: 18px;
+        }
+        
+        .leaderboard-item.second {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .leaderboard-item.third {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        
+        .rank {
+            font-size: 20px;
+            margin-right: 10px;
+        }
+        
+        .score-value {
+            font-size: 16px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin: 0 0 10px 0;
+        }
+        
+        .instructions {
+            text-align: center;
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        #gameCanvas {
+            border: 3px solid #333;
+            border-radius: 10px;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
+            cursor: move;
+            display: block;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .stat {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+        }
+        
+        .new-game-btn {
+            width: 100%;
+            margin-top: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .new-game-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .new-game-btn:active {
+            transform: translateY(0);
+        }
+        
+        .game-over {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            text-align: center;
+            display: none;
+            z-index: 1000;
+        }
+        
+        .game-over h2 {
+            color: #e74c3c;
+            margin-top: 0;
+        }
+        
+        .game-over button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        .game-over button:hover {
+            background: #5568d3;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-wrapper">
+        <div class="container">
+            <h1>💩 Poop Escape Game 💩</h1>
+            <div class="instructions">
+                Drag & drop an image to play! Move with mouse/touch to dodge the poop!
+            </div>
+            <canvas id="gameCanvas" width="600" height="400"></canvas>
+            <div class="stats">
+                <div class="stat">Score: <span id="score">0</span></div>
+                <div class="stat">Dodged: <span id="dodged">0</span></div>
+            </div>
+            <button class="new-game-btn" onclick="newGame()">🎮 New Game (Upload New Image)</button>
+        </div>
+        
+        <div class="leaderboard">
+            <h2>🏆 Top Scores</h2>
+            <ol class="leaderboard-list" id="leaderboardList">
+                <li class="leaderboard-item">No scores yet!</li>
+            </ol>
+        </div>
+    </div>
+    
+    <div class="game-over" id="gameOver">
+        <h2>Game Over!</h2>
+        <p>Final Score: <span id="finalScore">0</span></p>
+        <p>Poop Dodged: <span id="finalDodged">0</span></p>
+        <button onclick="restartGame()">Play Again</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let topScores = [];
+        
+        // Load scores from memory
+        function loadScores() {
+            topScores = [];
+        }
+        
+        // Save and update leaderboard
+        function saveScore(score) {
+            topScores.push({
+                score: score,
+                image: gameState.playerImgSrc
+            });
+            topScores.sort((a, b) => b.score - a.score);
+            topScores = topScores.slice(0, 10); // Keep top 10
+            updateLeaderboard();
+        }
+        
+        function updateLeaderboard() {
+            const list = document.getElementById('leaderboardList');
+            list.innerHTML = '';
+            
+            if (topScores.length === 0) {
+                const li = document.createElement('li');
+                li.className = 'leaderboard-item';
+                li.textContent = 'No scores yet!';
+                list.appendChild(li);
+                return;
+            }
+            
+            topScores.forEach((entry, index) => {
+                const li = document.createElement('li');
+                li.className = 'leaderboard-item';
+                
+                if (index === 0) li.classList.add('first');
+                else if (index === 1) li.classList.add('second');
+                else if (index === 2) li.classList.add('third');
+                
+                const rankSpan = document.createElement('span');
+                rankSpan.className = 'rank';
+                if (index === 0) rankSpan.textContent = '🥇';
+                else if (index === 1) rankSpan.textContent = '🥈';
+                else if (index === 2) rankSpan.textContent = '🥉';
+                else rankSpan.textContent = `${index + 1}.`;
+                
+                const scoreContent = document.createElement('div');
+                scoreContent.className = 'score-content';
+                
+                if (entry.image) {
+                    const img = document.createElement('img');
+                    img.className = 'score-image';
+                    img.src = entry.image;
+                    scoreContent.appendChild(img);
+                }
+                
+                const scoreSpan = document.createElement('span');
+                scoreSpan.className = 'score-value';
+                scoreSpan.textContent = entry.score.toLocaleString();
+                scoreContent.appendChild(scoreSpan);
+                
+                li.appendChild(rankSpan);
+                li.appendChild(scoreContent);
+                list.appendChild(li);
+            });
+        }
+        
+        loadScores();
+        
+        let gameState = {
+            player: null,
+            playerImg: null,
+            playerImgSrc: null,
+            playerX: canvas.width / 2,
+            playerY: canvas.height / 2,
+            playerSize: 50,
+            poops: [],
+            score: 0,
+            dodged: 0,
+            gameActive: false,
+            gameOver: false
+        };
+        
+        // Drag and drop functionality
+        canvas.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            canvas.style.opacity = '0.7';
+        });
+        
+        canvas.addEventListener('dragleave', () => {
+            canvas.style.opacity = '1';
+        });
+        
+        canvas.addEventListener('drop', (e) => {
+            e.preventDefault();
+            canvas.style.opacity = '1';
+            
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        gameState.playerImg = img;
+                        gameState.playerImgSrc = event.target.result;
+                        if (!gameState.gameActive) {
+                            startGame();
+                        }
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Mouse/Touch movement
+        canvas.addEventListener('mousemove', (e) => {
+            if (gameState.gameActive && !gameState.gameOver) {
+                const rect = canvas.getBoundingClientRect();
+                gameState.playerX = e.clientX - rect.left;
+                gameState.playerY = e.clientY - rect.top;
+            }
+        });
+        
+        canvas.addEventListener('touchmove', (e) => {
+            if (gameState.gameActive && !gameState.gameOver) {
+                e.preventDefault();
+                const rect = canvas.getBoundingClientRect();
+                const touch = e.touches[0];
+                gameState.playerX = touch.clientX - rect.left;
+                gameState.playerY = touch.clientY - rect.top;
+            }
+        });
+        
+        function startGame() {
+            gameState.gameActive = true;
+            gameState.gameOver = false;
+            gameState.score = 0;
+            gameState.dodged = 0;
+            gameState.poops = [];
+            document.getElementById('gameOver').style.display = 'none';
+            gameLoop();
+        }
+        
+        function spawnPoop() {
+            const side = Math.floor(Math.random() * 4); // 0: top, 1: right, 2: bottom, 3: left
+            let x, y, vx, vy;
+            const speed = 2 + Math.random() * 2;
+            
+            switch(side) {
+                case 0: // top
+                    x = Math.random() * canvas.width;
+                    y = -20;
+                    vx = (Math.random() - 0.5) * 2;
+                    vy = speed;
+                    break;
+                case 1: // right
+                    x = canvas.width + 20;
+                    y = Math.random() * canvas.height;
+                    vx = -speed;
+                    vy = (Math.random() - 0.5) * 2;
+                    break;
+                case 2: // bottom
+                    x = Math.random() * canvas.width;
+                    y = canvas.height + 20;
+                    vx = (Math.random() - 0.5) * 2;
+                    vy = -speed;
+                    break;
+                case 3: // left
+                    x = -20;
+                    y = Math.random() * canvas.height;
+                    vx = speed;
+                    vy = (Math.random() - 0.5) * 2;
+                    break;
+            }
+            
+            gameState.poops.push({ x, y, vx, vy, size: 30 });
+        }
+        
+        function drawPoop(x, y, size) {
+            ctx.fillStyle = '#8B4513';
+            ctx.beginPath();
+            ctx.ellipse(x, y + size * 0.2, size * 0.4, size * 0.3, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.ellipse(x, y, size * 0.35, size * 0.4, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.ellipse(x, y - size * 0.25, size * 0.3, size * 0.35, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        function checkCollision(px, py, pSize, poopX, poopY, poopSize) {
+            const dx = px - poopX;
+            const dy = py - poopY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            return distance < (pSize / 2 + poopSize / 2);
+        }
+        
+        function gameLoop() {
+            if (!gameState.gameActive || gameState.gameOver) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw sky gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#87CEEB');
+            gradient.addColorStop(1, '#E0F6FF');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Spawn poop randomly
+            if (Math.random() < 0.02 + gameState.score * 0.00001) {
+                spawnPoop();
+            }
+            
+            // Update and draw poops
+            gameState.poops = gameState.poops.filter(poop => {
+                poop.x += poop.vx;
+                poop.y += poop.vy;
+                
+                // Check if poop is out of bounds
+                if (poop.x < -50 || poop.x > canvas.width + 50 || 
+                    poop.y < -50 || poop.y > canvas.height + 50) {
+                    gameState.dodged++;
+                    return false;
+                }
+                
+                // Check collision
+                if (checkCollision(gameState.playerX, gameState.playerY, 
+                                   gameState.playerSize, poop.x, poop.y, poop.size)) {
+                    endGame();
+                    return true;
+                }
+                
+                drawPoop(poop.x, poop.y, poop.size);
+                return true;
+            });
+            
+            // Draw player
+            if (gameState.playerImg) {
+                ctx.save();
+                ctx.translate(gameState.playerX, gameState.playerY);
+                ctx.drawImage(gameState.playerImg, 
+                    -gameState.playerSize / 2, -gameState.playerSize / 2,
+                    gameState.playerSize, gameState.playerSize);
+                ctx.restore();
+            } else {
+                ctx.fillStyle = '#3498db';
+                ctx.beginPath();
+                ctx.arc(gameState.playerX, gameState.playerY, gameState.playerSize / 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            gameState.score++;
+            document.getElementById('score').textContent = gameState.score;
+            document.getElementById('dodged').textContent = gameState.dodged;
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        function endGame() {
+            gameState.gameOver = true;
+            saveScore(gameState.score);
+            document.getElementById('finalScore').textContent = gameState.score;
+            document.getElementById('finalDodged').textContent = gameState.dodged;
+            document.getElementById('gameOver').style.display = 'block';
+        }
+        
+        function restartGame() {
+            gameState.playerX = canvas.width / 2;
+            gameState.playerY = canvas.height / 2;
+            startGame();
+        }
+        
+        function newGame() {
+            gameState.gameActive = false;
+            gameState.gameOver = true;
+            gameState.playerImg = null;
+            gameState.playerImgSrc = null;
+            gameState.poops = [];
+            gameState.score = 0;
+            gameState.dodged = 0;
+            document.getElementById('score').textContent = '0';
+            document.getElementById('dodged').textContent = '0';
+            document.getElementById('gameOver').style.display = 'none';
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#333';
+            ctx.font = '24px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Drag & Drop a new image to start!', canvas.width / 2, canvas.height / 2);
+        }
+        
+        // Initial prompt
+        ctx.fillStyle = '#333';
+        ctx.font = '24px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Drag & Drop an image here to start!', canvas.width / 2, canvas.height / 2);
+    </script>
+</body>
+</html>
