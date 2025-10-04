@@ -3,530 +3,1288 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Poop Escape Game</title>
+    <title>Elemental Creatures</title>
     <style>
-        body {
+        * {
             margin: 0;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-family: 'Arial', sans-serif;
-        }
-        
-        .game-wrapper {
-            display: flex;
-            gap: 20px;
-            align-items: flex-start;
-        }
-        
-        .container {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        
-        .leaderboard {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            width: 250px;
-        }
-        
-        .leaderboard h2 {
-            margin: 0 0 15px 0;
-            color: #333;
-            text-align: center;
-            font-size: 24px;
-        }
-        
-        .leaderboard-list {
-            list-style: none;
             padding: 0;
-            margin: 0;
+            box-sizing: border-box;
         }
-        
-        .leaderboard-item {
+        body {
+            font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 12px 15px;
-            margin-bottom: 10px;
-            border-radius: 10px;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            min-height: 100vh;
+            padding: 20px;
         }
-        
-        .score-content {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1200px;
+            width: 100%;
         }
-        
-        .score-image {
-            width: 30px;
-            height: 30px;
-            border-radius: 5px;
-            object-fit: cover;
-            border: 2px solid white;
-        }
-        
-        .leaderboard-item.first {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            font-size: 18px;
-        }
-        
-        .leaderboard-item.second {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        }
-        
-        .leaderboard-item.third {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-        }
-        
-        .rank {
-            font-size: 20px;
-            margin-right: 10px;
-        }
-        
-        .score-value {
-            font-size: 16px;
-        }
-        
         h1 {
             text-align: center;
-            color: #333;
-            margin: 0 0 10px 0;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
-        
-        .instructions {
+        .subtitle {
             text-align: center;
             color: #666;
-            margin-bottom: 15px;
-            font-size: 14px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
         }
-        
-        #gameCanvas {
-            border: 3px solid #333;
-            border-radius: 10px;
-            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
-            cursor: move;
-            display: block;
-        }
-        
         .stats {
             display: flex;
-            justify-content: space-around;
-            margin-top: 15px;
-            font-size: 18px;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .stat-box {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        .game-area {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .sidebar {
+            flex: 1;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            max-height: 600px;
+            overflow-y: auto;
+            min-width: 200px;
+        }
+        .sidebar h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+        }
+        .item {
+            background: white;
+            border: 3px solid #ddd;
+            border-radius: 10px;
+            padding: 10px;
+            cursor: grab;
+            transition: all 0.3s;
+            text-align: center;
+            position: relative;
+        }
+        .item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+        .item.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+        .item-icon {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+        .item-name {
+            font-size: 0.75em;
             font-weight: bold;
             color: #333;
         }
-        
-        .stat {
-            padding: 10px 20px;
-            background: #f0f0f0;
-            border-radius: 10px;
+        .item-stats {
+            font-size: 0.65em;
+            color: #666;
+            margin-top: 3px;
         }
-        
-        .new-game-btn {
-            width: 100%;
-            margin-top: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.2s;
+        .canvas-container {
+            flex: 2;
+            position: relative;
         }
-        
-        .new-game-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        canvas {
+            border: 4px solid #667eea;
+            border-radius: 15px;
+            background: linear-gradient(180deg, #e0f2fe 0%, #bae6fd 100%);
+            display: block;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
-        
-        .new-game-btn:active {
-            transform: translateY(0);
-        }
-        
-        .game-over {
-            position: fixed;
+        .message {
+            position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .message.show {
+            opacity: 1;
+        }
+        .discovered-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #10b981;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .locked {
+            opacity: 0.4;
+            cursor: not-allowed;
+            filter: grayscale(100%);
+        }
+        .locked:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        .instructions {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
             text-align: center;
-            display: none;
-            z-index: 1000;
+            color: #856404;
         }
-        
-        .game-over h2 {
-            color: #e74c3c;
-            margin-top: 0;
-        }
-        
-        .game-over button {
-            background: #667eea;
+        .team-button {
+            background: linear-gradient(135deg, #10b981, #059669);
             color: white;
             border: none;
             padding: 15px 30px;
-            font-size: 18px;
             border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
             cursor: pointer;
-            margin-top: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            margin: 0 10px;
         }
-        
-        .game-over button:hover {
-            background: #5568d3;
+        .team-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+        .team-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .team-button.secondary {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+        .team-button.secondary:hover {
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+        }
+        .team-button.prompt-btn {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+        .team-button.prompt-btn:hover {
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+        .prompt-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .prompt-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .prompt-icon {
+            font-size: 3em;
+        }
+        .prompt-info h3 {
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 1.3em;
+        }
+        .prompt-info p {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .prompt-text {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #8b5cf6;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            line-height: 1.6;
+            color: #1f2937;
+            word-wrap: break-word;
+        }
+        .copy-btn {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .copy-btn:hover {
+            background: #7c3aed;
+            transform: translateY(-2px);
+        }
+        .copy-btn.copied {
+            background: #10b981;
+        }
+        .style-option {
+            cursor: pointer;
+            display: block;
+        }
+        .style-option input[type="radio"] {
+            display: none;
+        }
+        .style-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border: 3px solid #e5e7eb;
+            border-radius: 10px;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .style-option:hover .style-label {
+            border-color: #8b5cf6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+        }
+        .style-option input[type="radio"]:checked + .style-label {
+            border-color: #8b5cf6;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(124, 58, 237, 0.1));
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+        .style-icon {
+            font-size: 2.5em;
+            margin-bottom: 8px;
+        }
+        .style-label strong {
+            color: #333;
+            margin-bottom: 4px;
+            font-size: 1.1em;
+        }
+        .style-label small {
+            color: #666;
+            font-size: 0.85em;
+        }
+        .team-member-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border: 3px solid #10b981;
+        }
+        .team-member-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        .team-member-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+        .team-member-stats {
+            color: #666;
+            font-size: 0.9em;
         }
     </style>
 </head>
 <body>
-    <div class="game-wrapper">
-        <div class="container">
-            <h1>💩 Poop Escape Game 💩</h1>
-            <div class="instructions">
-                Drag & drop an image to play! Move with mouse/touch to dodge the poop!
-            </div>
-            <canvas id="gameCanvas" width="600" height="400"></canvas>
-            <div class="stats">
-                <div class="stat">Score: <span id="score">0</span></div>
-                <div class="stat">Dodged: <span id="dodged">0</span></div>
-            </div>
-            <button class="new-game-btn" onclick="newGame()">🎮 New Game (Upload New Image)</button>
-        </div>
+    <div class="container">
+        <h1>⚗️ Elemental Creatures ⚗️</h1>
+        <p class="subtitle">Drag and drop to merge creatures with elements!</p>
         
-        <div class="leaderboard">
-            <h2>🏆 Top Scores</h2>
-            <ol class="leaderboard-list" id="leaderboardList">
-                <li class="leaderboard-item">No scores yet!</li>
-            </ol>
+        <div class="stats">
+            <div class="stat-box">🔓 Discovered: <span id="discovered">25</span>/175</div>
+            <div class="stat-box">💪 Total Power: <span id="totalPower">0</span></div>
+            <div class="stat-box">🎯 Merges: <span id="mergeCount">0</span></div>
         </div>
-    </div>
-    
-    <div class="game-over" id="gameOver">
-        <h2>Game Over!</h2>
-        <p>Final Score: <span id="finalScore">0</span></p>
-        <p>Poop Dodged: <span id="finalDodged">0</span></p>
-        <button onclick="restartGame()">Play Again</button>
+
+        <div class="instructions">
+            🎮 Drag creatures and elements onto the canvas, then drag them together to merge! Every creature can merge with ALL 7 elements!
+        </div>
+
+        <div style="text-align: center; margin-bottom: 20px;">
+            <button id="createTeamBtn" class="team-button">⚔️ Create Team from Canvas</button>
+            <button id="clearTeamBtn" class="team-button secondary">🗑️ Clear Team</button>
+            <button id="generatePromptBtn" class="team-button prompt-btn">🎨 Generate Image Prompts</button>
+            <button id="exportBattleBtn" class="team-button battle-btn" style="display: none;">⚔️ Export Team for Battle</button>
+        </div>
+
+        <div id="styleSelector" style="display: none; background: rgba(139, 92, 246, 0.1); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 2px solid #8b5cf6;">
+            <h3 style="text-align: center; color: #8b5cf6; margin-bottom: 15px;">🎨 Select Art Style</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                <label class="style-option">
+                    <input type="radio" name="artStyle" value="fantasy" checked>
+                    <span class="style-label">
+                        <span class="style-icon">🏰</span>
+                        <strong>Epic Fantasy</strong>
+                        <small>High fantasy, magical, detailed</small>
+                    </span>
+                </label>
+                <label class="style-option">
+                    <input type="radio" name="artStyle" value="realistic">
+                    <span class="style-label">
+                        <span class="style-icon">📸</span>
+                        <strong>Hyper Realistic</strong>
+                        <small>Photorealistic, lifelike, detailed</small>
+                    </span>
+                </label>
+                <label class="style-option">
+                    <input type="radio" name="artStyle" value="anime">
+                    <span class="style-label">
+                        <span class="style-icon">⚡</span>
+                        <strong>Anime/Manga</strong>
+                        <small>Japanese style, vibrant colors</small>
+                    </span>
+                </label>
+                <label class="style-option">
+                    <input type="radio" name="artStyle" value="cyberpunk">
+                    <span class="style-label">
+                        <span class="style-icon">🌃</span>
+                        <strong>Cyberpunk</strong>
+                        <small>Futuristic, neon, tech-enhanced</small>
+                    </span>
+                </label>
+                <label class="style-option">
+                    <input type="radio" name="artStyle" value="cartoon">
+                    <span class="style-label">
+                        <span class="style-icon">🎮</span>
+                        <strong>Cartoon/Game</strong>
+                        <small>Stylized, colorful, fun</small>
+                    </span>
+                </label>
+                <label class="style-option">
+                    <input type="radio" name="artStyle" value="dark">
+                    <span class="style-label">
+                        <span class="style-icon">🌑</span>
+                        <strong>Dark Fantasy</strong>
+                        <small>Gothic, horror, atmospheric</small>
+                    </span>
+                </label>
+                <label class="style-option">
+                    <input type="radio" name="artStyle" value="minimalist">
+                    <span class="style-label">
+                        <span class="style-icon">⚪</span>
+                        <strong>Minimalist</strong>
+                        <small>Simple, clean, modern</small>
+                    </span>
+                </label>
+                <label class="style-option">
+                    <input type="radio" name="artStyle" value="watercolor">
+                    <span class="style-label">
+                        <span class="style-icon">🎨</span>
+                        <strong>Watercolor</strong>
+                        <small>Artistic, painted, soft colors</small>
+                    </span>
+                </label>
+            </div>
+            <div style="text-align: center;">
+                <button id="confirmStyleBtn" class="team-button prompt-btn">✨ Generate with Selected Style</button>
+            </div>
+        </div>
+
+        <div id="teamDisplay" style="display: none;">
+            <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+                <h2 style="color: white; text-align: center; margin-bottom: 15px;">🏆 YOUR TEAM</h2>
+                <div id="teamStats" style="display: flex; gap: 15px; justify-content: center; margin-bottom: 15px; flex-wrap: wrap;">
+                    <div style="background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 10px; color: white; font-weight: bold;">
+                        💪 Team Power: <span id="teamPower">0</span>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 10px; color: white; font-weight: bold;">
+                        ⚡ Team Speed: <span id="teamSpeed">0</span>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 10px; color: white; font-weight: bold;">
+                        🎯 Total Score: <span id="teamScore">0</span>
+                    </div>
+                </div>
+                <div id="teamMembers" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;"></div>
+            </div>
+        </div>
+
+        <div id="promptDisplay" style="display: none;">
+            <div style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+                <h2 style="color: white; text-align: center; margin-bottom: 15px;">🎨 AI Image Generation Prompts</h2>
+                <p style="color: rgba(255,255,255,0.9); text-align: center; margin-bottom: 15px; font-size: 0.9em;">
+                    Copy these prompts to use with DALL-E, Midjourney, Stable Diffusion, or any AI image generator!
+                </p>
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <button id="generateTeamPromptBtn" class="team-button" style="background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
+                        🏆 Generate Team Composition Prompt
+                    </button>
+                </div>
+                <div id="promptList"></div>
+            </div>
+        </div>
+
+        <div id="teamPromptDisplay" style="display: none;">
+            <div style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 25px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);">
+                <h2 style="color: white; text-align: center; margin-bottom: 10px;">🏆 TEAM COMPOSITION IMAGE PROMPT</h2>
+                <p style="color: rgba(255,255,255,0.9); text-align: center; margin-bottom: 20px; font-size: 0.95em;">
+                    Use this mega-prompt to generate an epic team illustration with all your creatures together!
+                </p>
+                <div id="teamPromptCard" class="prompt-card" style="border: 4px solid #f59e0b;">
+                    <div style="margin-bottom: 15px; text-align: center;">
+                        <div style="font-size: 3em; margin-bottom: 10px;" id="teamIconsDisplay"></div>
+                        <h3 style="color: #d97706; font-size: 1.4em;">Your Ultimate Team</h3>
+                        <p style="color: #666;" id="teamCompositionInfo"></p>
+                    </div>
+                    <div class="prompt-text" id="teamPromptText" style="border-left-color: #f59e0b;"></div>
+                    <button class="copy-btn" onclick="copyTeamPrompt(this)" style="background: #f59e0b; font-size: 1.1em; padding: 12px 25px;">
+                        📋 Copy Team Prompt
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-area">
+            <div class="sidebar">
+                <h2>🐾 Creatures</h2>
+                <div class="items-grid" id="creaturesGrid"></div>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="gameCanvas" width="600" height="500"></canvas>
+                <div class="message" id="message"></div>
+            </div>
+
+            <div class="sidebar">
+                <h2>🔥 Elements</h2>
+                <div class="items-grid" id="elementsGrid"></div>
+            </div>
+        </div>
     </div>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        
-        let topScores = [];
-        
-        // Load scores from memory
-        function loadScores() {
-            topScores = [];
-        }
-        
-        // Save and update leaderboard
-        function saveScore(score) {
-            topScores.push({
-                score: score,
-                image: gameState.playerImgSrc
-            });
-            topScores.sort((a, b) => b.score - a.score);
-            topScores = topScores.slice(0, 10); // Keep top 10
-            updateLeaderboard();
-        }
-        
-        function updateLeaderboard() {
-            const list = document.getElementById('leaderboardList');
-            list.innerHTML = '';
+        const message = document.getElementById('message');
+
+        // Game data
+        const baseCreatures = [
+            { id: 'cat', name: 'Cat', icon: '🐱', power: 5, speed: 8, locked: false },
+            { id: 'dog', name: 'Dog', icon: '🐕', power: 7, speed: 6, locked: false },
+            { id: 'bird', name: 'Bird', icon: '🐦', power: 3, speed: 10, locked: false },
+            { id: 'fish', name: 'Fish', icon: '🐠', power: 4, speed: 7, locked: false },
+            { id: 'turtle', name: 'Turtle', icon: '🐢', power: 8, speed: 2, locked: false },
+            { id: 'wolf', name: 'Wolf', icon: '🐺', power: 12, speed: 9, locked: false },
+            { id: 'bear', name: 'Bear', icon: '🐻', power: 15, speed: 5, locked: false },
+            { id: 'tiger', name: 'Tiger', icon: '🐯', power: 14, speed: 11, locked: false },
+            { id: 'lion', name: 'Lion', icon: '🦁', power: 16, speed: 10, locked: false },
+            { id: 'eagle', name: 'Eagle', icon: '🦅', power: 9, speed: 15, locked: false },
+            { id: 'shark', name: 'Shark', icon: '🦈', power: 13, speed: 12, locked: false },
+            { id: 'crocodile', name: 'Crocodile', icon: '🐊', power: 14, speed: 7, locked: false },
+            { id: 'snake', name: 'Snake', icon: '🐍', power: 10, speed: 13, locked: false },
+            { id: 'scorpion', name: 'Scorpion', icon: '🦂', power: 11, speed: 8, locked: false },
+            { id: 'spider', name: 'Spider', icon: '🕷️', power: 8, speed: 11, locked: false },
+            { id: 'bat', name: 'Bat', icon: '🦇', power: 6, speed: 14, locked: false },
+            { id: 'panther', name: 'Panther', icon: '🐆', power: 13, speed: 12, locked: false },
+            { id: 'rhino', name: 'Rhino', icon: '🦏', power: 18, speed: 4, locked: false },
+            { id: 'gorilla', name: 'Gorilla', icon: '🦍', power: 17, speed: 6, locked: false },
+            { id: 'komodo', name: 'Komodo', icon: '🦎', power: 12, speed: 8, locked: false },
+            { id: 'hyena', name: 'Hyena', icon: '🦴', power: 10, speed: 9, locked: false },
+            { id: 'vulture', name: 'Vulture', icon: '🦅', power: 7, speed: 12, locked: false },
+            { id: 'mongoose', name: 'Mongoose', icon: '🦦', power: 8, speed: 14, locked: false },
+            { id: 'mantis', name: 'Mantis', icon: '🦗', power: 9, speed: 10, locked: false },
+            { id: 'falcon', name: 'Falcon', icon: '🦅', power: 8, speed: 16, locked: false }
+        ];
+
+        const elements = [
+            { id: 'fire', name: 'Fire', icon: '🔥', bonus: 'power', value: 5 },
+            { id: 'water', name: 'Water', icon: '💧', bonus: 'speed', value: 3 },
+            { id: 'earth', name: 'Earth', icon: '🌍', bonus: 'power', value: 3 },
+            { id: 'air', name: 'Air', icon: '💨', bonus: 'speed', value: 5 },
+            { id: 'lightning', name: 'Lightning', icon: '⚡', bonus: 'both', value: 4 },
+            { id: 'poison', name: 'Poison', icon: '☠️', bonus: 'power', value: 6 },
+            { id: 'lava', name: 'Lava', icon: '🌋', bonus: 'both', value: 7 }
+        ];
+
+        const mergeRecipes = {
+            // Original recipes
+            'cat-fire': { name: 'Fire Cat', icon: '🔥🐱', power: 12, speed: 10 },
+            'cat-water': { name: 'Water Cat', icon: '💧🐱', power: 7, speed: 13 },
+            'cat-lightning': { name: 'Thunder Cat', icon: '⚡🐱', power: 11, speed: 14 },
+            'dog-fire': { name: 'Hellhound', icon: '🔥🐕', power: 15, speed: 8 },
+            'dog-earth': { name: 'Stone Dog', icon: '🌍🐕', power: 13, speed: 7 },
+            'bird-air': { name: 'Sky Bird', icon: '💨🐦', power: 6, speed: 18 },
+            'bird-lightning': { name: 'Storm Bird', icon: '⚡🐦', power: 10, speed: 16 },
+            'fish-water': { name: 'Sea Serpent', icon: '💧🐠', power: 8, speed: 12 },
+            'turtle-earth': { name: 'Rock Titan', icon: '🌍🐢', power: 16, speed: 4 },
+            'turtle-water': { name: 'Sea Turtle', icon: '💧🐢', power: 10, speed: 8 },
             
-            if (topScores.length === 0) {
-                const li = document.createElement('li');
-                li.className = 'leaderboard-item';
-                li.textContent = 'No scores yet!';
-                list.appendChild(li);
+            // Wolf combinations
+            'wolf-fire': { name: 'Inferno Wolf', icon: '🔥🐺', power: 20, speed: 12 },
+            'wolf-poison': { name: 'Venom Wolf', icon: '☠️🐺', power: 21, speed: 11 },
+            'wolf-lava': { name: 'Magma Wolf', icon: '🌋🐺', power: 24, speed: 13 },
+            'wolf-lightning': { name: 'Storm Wolf', icon: '⚡🐺', power: 18, speed: 15 },
+            
+            // Bear combinations
+            'bear-earth': { name: 'Mountain Bear', icon: '🌍🐻', power: 22, speed: 6 },
+            'bear-lava': { name: 'Lava Bear', icon: '🌋🐻', power: 28, speed: 8 },
+            'bear-fire': { name: 'Flame Bear', icon: '🔥🐻', power: 24, speed: 7 },
+            
+            // Tiger combinations
+            'tiger-fire': { name: 'Blaze Tiger', icon: '🔥🐯', power: 22, speed: 14 },
+            'tiger-lightning': { name: 'Thunder Tiger', icon: '⚡🐯', power: 20, speed: 17 },
+            'tiger-poison': { name: 'Toxic Tiger', icon: '☠️🐯', power: 23, speed: 13 },
+            'tiger-lava': { name: 'Volcanic Tiger', icon: '🌋🐯', power: 26, speed: 15 },
+            
+            // Lion combinations
+            'lion-fire': { name: 'Fire Lion King', icon: '🔥🦁', power: 25, speed: 13 },
+            'lion-lightning': { name: 'Thunder King', icon: '⚡🦁', power: 23, speed: 16 },
+            'lion-lava': { name: 'Lava King', icon: '🌋🦁', power: 29, speed: 14 },
+            
+            // Eagle combinations
+            'eagle-lightning': { name: 'Storm Eagle', icon: '⚡🦅', power: 15, speed: 22 },
+            'eagle-air': { name: 'Sky Predator', icon: '💨🦅', power: 12, speed: 25 },
+            'eagle-fire': { name: 'Phoenix Eagle', icon: '🔥🦅', power: 17, speed: 20 },
+            
+            // Shark combinations
+            'shark-water': { name: 'Mega Shark', icon: '💧🦈', power: 18, speed: 16 },
+            'shark-poison': { name: 'Toxic Shark', icon: '☠️🦈', power: 22, speed: 14 },
+            'shark-lightning': { name: 'Electric Shark', icon: '⚡🦈', power: 19, speed: 18 },
+            
+            // Crocodile combinations
+            'crocodile-water': { name: 'Swamp Beast', icon: '💧🐊', power: 19, speed: 10 },
+            'crocodile-poison': { name: 'Poison Croc', icon: '☠️🐊', power: 23, speed: 9 },
+            'crocodile-lava': { name: 'Lava Croc', icon: '🌋🐊', power: 27, speed: 11 },
+            
+            // Snake combinations
+            'snake-poison': { name: 'Viper King', icon: '☠️🐍', power: 19, speed: 16 },
+            'snake-fire': { name: 'Fire Serpent', icon: '🔥🐍', power: 17, speed: 15 },
+            'snake-lava': { name: 'Lava Serpent', icon: '🌋🐍', power: 23, speed: 17 },
+            
+            // Scorpion combinations
+            'scorpion-poison': { name: 'Death Scorpion', icon: '☠️🦂', power: 20, speed: 11 },
+            'scorpion-fire': { name: 'Flame Scorpion', icon: '🔥🦂', power: 18, speed: 10 },
+            'scorpion-lava': { name: 'Magma Scorpion', icon: '🌋🦂', power: 24, speed: 12 },
+            
+            // Spider combinations
+            'spider-poison': { name: 'Widow Spider', icon: '☠️🕷️', power: 17, speed: 14 },
+            'spider-fire': { name: 'Inferno Spider', icon: '🔥🕷️', power: 15, speed: 13 },
+            'spider-lightning': { name: 'Shock Spider', icon: '⚡🕷️', power: 14, speed: 17 },
+            
+            // Bat combinations
+            'bat-poison': { name: 'Vampire Bat', icon: '☠️🦇', power: 14, speed: 18 },
+            'bat-lightning': { name: 'Storm Bat', icon: '⚡🦇', power: 12, speed: 20 },
+            'bat-air': { name: 'Wind Bat', icon: '💨🦇', power: 10, speed: 22 },
+            
+            // Panther combinations
+            'panther-poison': { name: 'Shadow Panther', icon: '☠️🐆', power: 22, speed: 15 },
+            'panther-lightning': { name: 'Thunder Panther', icon: '⚡🐆', power: 19, speed: 18 },
+            'panther-lava': { name: 'Lava Panther', icon: '🌋🐆', power: 26, speed: 16 },
+            
+            // Rhino combinations
+            'rhino-earth': { name: 'Stone Rhino', icon: '🌍🦏', power: 25, speed: 5 },
+            'rhino-lava': { name: 'Magma Rhino', icon: '🌋🦏', power: 32, speed: 7 },
+            'rhino-fire': { name: 'Flame Rhino', icon: '🔥🦏', power: 27, speed: 6 },
+            
+            // Gorilla combinations
+            'gorilla-earth': { name: 'Stone Kong', icon: '🌍🦍', power: 24, speed: 7 },
+            'gorilla-lightning': { name: 'Thunder Kong', icon: '⚡🦍', power: 23, speed: 10 },
+            'gorilla-lava': { name: 'Lava Kong', icon: '🌋🦍', power: 30, speed: 9 },
+            
+            // Komodo combinations
+            'komodo-poison': { name: 'Toxic Dragon', icon: '☠️🦎', power: 21, speed: 11 },
+            'komodo-fire': { name: 'Fire Dragon', icon: '🔥🦎', power: 19, speed: 10 },
+            'komodo-lava': { name: 'Lava Dragon', icon: '🌋🦎', power: 25, speed: 12 },
+            
+            // Hyena combinations
+            'hyena-poison': { name: 'Plague Hyena', icon: '☠️🦴', power: 18, speed: 12 },
+            'hyena-fire': { name: 'Flame Hyena', icon: '🔥🦴', power: 17, speed: 11 },
+            
+            // Vulture combinations
+            'vulture-poison': { name: 'Death Vulture', icon: '☠️🦅', power: 15, speed: 15 },
+            'vulture-air': { name: 'Sky Vulture', icon: '💨🦅', power: 11, speed: 19 },
+            
+            // Mongoose combinations
+            'mongoose-lightning': { name: 'Thunder Mongoose', icon: '⚡🦦', power: 14, speed: 20 },
+            'mongoose-poison': { name: 'Venom Mongoose', icon: '☠️🦦', power: 16, speed: 17 },
+            
+            // Mantis combinations
+            'mantis-poison': { name: 'Toxic Mantis', icon: '☠️🦗', power: 17, speed: 13 },
+            'mantis-lightning': { name: 'Shock Mantis', icon: '⚡🦗', power: 15, speed: 16 },
+            
+            // Falcon combinations
+            'falcon-air': { name: 'Wind Falcon', icon: '💨🦅', power: 12, speed: 24 },
+            'falcon-lightning': { name: 'Storm Falcon', icon: '⚡🦅', power: 14, speed: 22 },
+            'falcon-fire': { name: 'Fire Falcon', icon: '🔥🦅', power: 16, speed: 21 }
+        };
+
+        let discoveredCreatures = [...baseCreatures];
+        let canvasItems = [];
+        let draggedItem = null;
+        let mergeCount = 0;
+        let currentTeam = [];
+
+        // Initialize grids
+        function renderGrids() {
+            const creaturesGrid = document.getElementById('creaturesGrid');
+            const elementsGrid = document.getElementById('elementsGrid');
+            
+            creaturesGrid.innerHTML = '';
+            elementsGrid.innerHTML = '';
+
+            discoveredCreatures.forEach(creature => {
+                const div = createItemElement(creature, 'creature');
+                creaturesGrid.appendChild(div);
+            });
+
+            elements.forEach(element => {
+                const div = createItemElement(element, 'element');
+                elementsGrid.appendChild(div);
+            });
+        }
+
+        function createItemElement(item, type) {
+            const div = document.createElement('div');
+            div.className = `item ${item.locked ? 'locked' : ''}`;
+            div.draggable = !item.locked;
+            
+            div.innerHTML = `
+                <div class="item-icon">${item.icon}</div>
+                <div class="item-name">${item.name}</div>
+                <div class="item-stats">
+                    ${type === 'creature' ? `💪${item.power} ⚡${item.speed}` : `+${item.value}`}
+                </div>
+            `;
+
+            if (!item.locked) {
+                div.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('itemData', JSON.stringify({ ...item, type }));
+                    div.classList.add('dragging');
+                });
+
+                div.addEventListener('dragend', () => {
+                    div.classList.remove('dragging');
+                });
+            }
+
+            return div;
+        }
+
+        // Canvas drag and drop
+        canvas.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        canvas.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const itemData = JSON.parse(e.dataTransfer.getData('itemData'));
+            
+            canvasItems.push({
+                ...itemData,
+                x,
+                y,
+                radius: 40
+            });
+
+            drawCanvas();
+            checkForMerges();
+        });
+
+        function drawCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            canvasItems.forEach((item, index) => {
+                // Draw circle background
+                ctx.beginPath();
+                ctx.arc(item.x, item.y, item.radius, 0, Math.PI * 2);
+                ctx.fillStyle = item.type === 'creature' ? 
+                    'rgba(102, 126, 234, 0.2)' : 'rgba(239, 68, 68, 0.2)';
+                ctx.fill();
+                ctx.strokeStyle = item.type === 'creature' ? '#667eea' : '#ef4444';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Draw icon
+                ctx.font = '35px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = '#000';
+                ctx.fillText(item.icon, item.x, item.y);
+
+                // Draw stats
+                if (item.type === 'creature') {
+                    ctx.font = '12px Arial';
+                    ctx.fillStyle = '#333';
+                    ctx.fillText(`💪${item.power} ⚡${item.speed}`, item.x, item.y + item.radius + 15);
+                }
+            });
+        }
+
+        function checkForMerges() {
+            for (let i = 0; i < canvasItems.length; i++) {
+                for (let j = i + 1; j < canvasItems.length; j++) {
+                    const item1 = canvasItems[i];
+                    const item2 = canvasItems[j];
+                    
+                    const dx = item1.x - item2.x;
+                    const dy = item1.y - item2.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < item1.radius + item2.radius) {
+                        tryMerge(item1, item2, i, j);
+                    }
+                }
+            }
+        }
+
+        function tryMerge(item1, item2, index1, index2) {
+            let creature, element;
+            
+            if (item1.type === 'creature' && item2.type === 'element') {
+                creature = item1;
+                element = item2;
+            } else if (item1.type === 'element' && item2.type === 'creature') {
+                creature = item2;
+                element = item1;
+            } else {
+                return;
+            }
+
+            const recipeKey = `${creature.id}-${element.id}`;
+            let recipe = mergeRecipes[recipeKey];
+
+            // If no predefined recipe, generate one dynamically
+            if (!recipe) {
+                recipe = generateDynamicMerge(creature, element);
+            }
+
+            if (recipe) {
+                // Create new merged creature
+                const newCreature = {
+                    id: recipeKey,
+                    name: recipe.name,
+                    icon: recipe.icon,
+                    power: recipe.power,
+                    speed: recipe.speed,
+                    locked: false
+                };
+
+                // Check if already discovered
+                const alreadyDiscovered = discoveredCreatures.some(c => c.id === recipeKey);
+                
+                if (!alreadyDiscovered) {
+                    discoveredCreatures.push(newCreature);
+                    showMessage(`🎉 Discovered: ${recipe.name}!`);
+                } else {
+                    showMessage(`✨ Created: ${recipe.name}!`);
+                }
+
+                // Remove merged items and add new one
+                const maxIndex = Math.max(index1, index2);
+                const minIndex = Math.min(index1, index2);
+                
+                canvasItems.splice(maxIndex, 1);
+                canvasItems.splice(minIndex, 1);
+
+                canvasItems.push({
+                    ...newCreature,
+                    type: 'creature',
+                    x: (item1.x + item2.x) / 2,
+                    y: (item1.y + item2.y) / 2,
+                    radius: 40
+                });
+
+                mergeCount++;
+                updateStats();
+                renderGrids();
+                drawCanvas();
+            }
+        }
+
+        function generateDynamicMerge(creature, element) {
+            const elementPrefixes = {
+                'fire': ['Flame', 'Blaze', 'Inferno', 'Fire'],
+                'water': ['Aqua', 'Ocean', 'Water', 'Hydro'],
+                'earth': ['Stone', 'Rock', 'Mountain', 'Earth'],
+                'air': ['Wind', 'Sky', 'Storm', 'Air'],
+                'lightning': ['Thunder', 'Electric', 'Storm', 'Shock'],
+                'poison': ['Toxic', 'Venom', 'Plague', 'Poison'],
+                'lava': ['Magma', 'Volcanic', 'Lava', 'Molten']
+            };
+
+            const prefix = elementPrefixes[element.id][Math.floor(Math.random() * elementPrefixes[element.id].length)];
+            const name = `${prefix} ${creature.name}`;
+            const icon = `${element.icon}${creature.icon}`;
+
+            let power = creature.power;
+            let speed = creature.speed;
+
+            // Apply element bonuses
+            switch(element.id) {
+                case 'fire':
+                    power += 7;
+                    speed += 2;
+                    break;
+                case 'water':
+                    power += 3;
+                    speed += 5;
+                    break;
+                case 'earth':
+                    power += 6;
+                    speed += 1;
+                    break;
+                case 'air':
+                    power += 2;
+                    speed += 8;
+                    break;
+                case 'lightning':
+                    power += 5;
+                    speed += 6;
+                    break;
+                case 'poison':
+                    power += 8;
+                    speed += 3;
+                    break;
+                case 'lava':
+                    power += 10;
+                    speed += 5;
+                    break;
+            }
+
+            return { name, icon, power, speed };
+        }
+
+        function showMessage(text) {
+            message.textContent = text;
+            message.classList.add('show');
+            setTimeout(() => {
+                message.classList.remove('show');
+            }, 2000);
+        }
+
+        function updateStats() {
+            document.getElementById('discovered').textContent = discoveredCreatures.length;
+            document.getElementById('mergeCount').textContent = mergeCount;
+            
+            const totalPower = canvasItems
+                .filter(item => item.type === 'creature')
+                .reduce((sum, item) => sum + item.power + item.speed, 0);
+            
+            document.getElementById('totalPower').textContent = totalPower;
+        }
+
+        // Initialize
+        renderGrids();
+        drawCanvas();
+        updateStats();
+
+        // Team management
+        document.getElementById('createTeamBtn').addEventListener('click', createTeam);
+        document.getElementById('clearTeamBtn').addEventListener('click', clearTeam);
+        document.getElementById('generatePromptBtn').addEventListener('click', showStyleSelector);
+        document.getElementById('confirmStyleBtn').addEventListener('click', generateImagePrompts);
+        document.getElementById('generateTeamPromptBtn').addEventListener('click', generateTeamPrompt);
+
+        function createTeam() {
+            const creatures = canvasItems.filter(item => item.type === 'creature');
+            
+            if (creatures.length === 0) {
+                showMessage('❌ No creatures on canvas!');
                 return;
             }
             
-            topScores.forEach((entry, index) => {
-                const li = document.createElement('li');
-                li.className = 'leaderboard-item';
+            if (creatures.length > 5) {
+                showMessage('⚠️ Select up to 5 creatures only!');
+                return;
+            }
+
+            currentTeam = creatures.map(c => ({
+                id: c.id,
+                name: c.name,
+                icon: c.icon,
+                power: c.power,
+                speed: c.speed
+            }));
+
+            displayTeam();
+            showMessage(`✅ Team Created with ${currentTeam.length} members!`);
+        }
+
+        function displayTeam() {
+            const teamDisplay = document.getElementById('teamDisplay');
+            const teamMembers = document.getElementById('teamMembers');
+            
+            if (currentTeam.length === 0) {
+                teamDisplay.style.display = 'none';
+                return;
+            }
+
+            teamDisplay.style.display = 'block';
+            teamMembers.innerHTML = '';
+
+            let totalPower = 0;
+            let totalSpeed = 0;
+
+            currentTeam.forEach(member => {
+                totalPower += member.power;
+                totalSpeed += member.speed;
+
+                const card = document.createElement('div');
+                card.className = 'team-member-card';
+                card.innerHTML = `
+                    <div class="team-member-icon">${member.icon}</div>
+                    <div class="team-member-name">${member.name}</div>
+                    <div class="team-member-stats">
+                        💪 ${member.power} | ⚡ ${member.speed}
+                    </div>
+                `;
+                teamMembers.appendChild(card);
+            });
+
+            document.getElementById('teamPower').textContent = totalPower;
+            document.getElementById('teamSpeed').textContent = totalSpeed;
+            document.getElementById('teamScore').textContent = totalPower + totalSpeed;
+        }
+
+        function clearTeam() {
+            if (currentTeam.length === 0) {
+                showMessage('❌ No team to clear!');
+                return;
+            }
+            
+            currentTeam = [];
+            displayTeam();
+            showMessage('🗑️ Team cleared!');
+        }
+
+        function showStyleSelector() {
+            const creatures = canvasItems.filter(item => item.type === 'creature');
+            
+            if (creatures.length === 0) {
+                showMessage('❌ No creatures on canvas to generate prompts!');
+                return;
+            }
+
+            const styleSelector = document.getElementById('styleSelector');
+            styleSelector.style.display = 'block';
+            styleSelector.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function generateImagePrompts() {
+            const creatures = canvasItems.filter(item => item.type === 'creature');
+            
+            if (creatures.length === 0) {
+                showMessage('❌ No creatures on canvas to generate prompts!');
+                return;
+            }
+
+            // Get selected art style
+            const selectedStyle = document.querySelector('input[name="artStyle"]:checked').value;
+
+            const promptDisplay = document.getElementById('promptDisplay');
+            const promptList = document.getElementById('promptList');
+            
+            promptDisplay.style.display = 'block';
+            promptList.innerHTML = '';
+
+            creatures.forEach((creature, index) => {
+                const prompt = generateCreaturePrompt(creature, selectedStyle);
                 
-                if (index === 0) li.classList.add('first');
-                else if (index === 1) li.classList.add('second');
-                else if (index === 2) li.classList.add('third');
+                const card = document.createElement('div');
+                card.className = 'prompt-card';
+                card.innerHTML = `
+                    <div class="prompt-header">
+                        <div class="prompt-icon">${creature.icon}</div>
+                        <div class="prompt-info">
+                            <h3>${creature.name}</h3>
+                            <p>💪 Power: ${creature.power} | ⚡ Speed: ${creature.speed} | 🎨 Style: ${getStyleName(selectedStyle)}</p>
+                        </div>
+                    </div>
+                    <div class="prompt-text" id="prompt-${index}">${prompt}</div>
+                    <button class="copy-btn" onclick="copyPrompt(${index}, this)">📋 Copy Prompt</button>
+                `;
+                promptList.appendChild(card);
+            });
+
+            showMessage(`🎨 Generated ${creatures.length} prompts in ${getStyleName(selectedStyle)} style!`);
+            
+            // Scroll to prompts
+            promptDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function getStyleName(style) {
+            const styleNames = {
+                'fantasy': 'Epic Fantasy',
+                'realistic': 'Hyper Realistic',
+                'anime': 'Anime/Manga',
+                'cyberpunk': 'Cyberpunk',
+                'cartoon': 'Cartoon/Game',
+                'dark': 'Dark Fantasy',
+                'minimalist': 'Minimalist',
+                'watercolor': 'Watercolor'
+            };
+            return styleNames[style] || style;
+        }
+
+        function generateCreaturePrompt(creature, artStyle) {
+            // Determine element type from name/icon
+            let elementType = 'elemental';
+            let elementDesc = '';
+            let style = 'fantasy creature';
+            
+            if (creature.icon.includes('🔥') || creature.name.toLowerCase().includes('fire') || creature.name.toLowerCase().includes('flame') || creature.name.toLowerCase().includes('blaze') || creature.name.toLowerCase().includes('inferno')) {
+                elementDesc = 'engulfed in fierce flames and burning embers, with fire emanating from its body, glowing orange and red eyes';
+                style = 'fire elemental beast';
+            } else if (creature.icon.includes('💧') || creature.name.toLowerCase().includes('water') || creature.name.toLowerCase().includes('aqua') || creature.name.toLowerCase().includes('ocean') || creature.name.toLowerCase().includes('sea')) {
+                elementDesc = 'made of flowing water and ocean waves, with aquatic features, bioluminescent blue glow, water droplets floating around';
+                style = 'water elemental creature';
+            } else if (creature.icon.includes('🌍') || creature.name.toLowerCase().includes('earth') || creature.name.toLowerCase().includes('stone') || creature.name.toLowerCase().includes('rock') || creature.name.toLowerCase().includes('mountain')) {
+                elementDesc = 'covered in stone armor and rocky texture, with crystalline formations, earth and moss growing on its body';
+                style = 'earth elemental golem';
+            } else if (creature.icon.includes('💨') || creature.name.toLowerCase().includes('air') || creature.name.toLowerCase().includes('wind') || creature.name.toLowerCase().includes('sky') || creature.name.toLowerCase().includes('storm')) {
+                elementDesc = 'surrounded by swirling winds and clouds, semi-translucent ethereal form, wind particles and mist flowing around';
+                style = 'air elemental spirit';
+            } else if (creature.icon.includes('⚡') || creature.name.toLowerCase().includes('thunder') || creature.name.toLowerCase().includes('electric') || creature.name.toLowerCase().includes('shock') || creature.name.toLowerCase().includes('lightning')) {
+                elementDesc = 'crackling with electricity and lightning bolts, glowing electric blue energy coursing through body, electric sparks and plasma effects';
+                style = 'lightning elemental beast';
+            } else if (creature.icon.includes('☠️') || creature.name.toLowerCase().includes('poison') || creature.name.toLowerCase().includes('toxic') || creature.name.toLowerCase().includes('venom') || creature.name.toLowerCase().includes('plague')) {
+                elementDesc = 'dripping with toxic poison and venomous gas, sickly green and purple colors, poisonous mist and acid effects';
+                style = 'poison elemental creature';
+            } else if (creature.icon.includes('🌋') || creature.name.toLowerCase().includes('lava') || creature.name.toLowerCase().includes('magma') || creature.name.toLowerCase().includes('volcanic') || creature.name.toLowerCase().includes('molten')) {
+                elementDesc = 'made of molten lava and volcanic rock, glowing red-hot cracks revealing magma underneath, smoke and ash particles, intense heat distortion';
+                style = 'lava elemental titan';
+            }
+
+            // Get base animal type
+            let animalBase = creature.name.split(' ').pop().toLowerCase();
+            
+            // Art style specific additions
+            let styleDesc = '';
+            let qualityTags = '';
+            
+            switch(artStyle) {
+                case 'fantasy':
+                    styleDesc = 'Epic high fantasy art style, magical atmosphere, dramatic cinematic lighting, intricate details';
+                    qualityTags = '8K quality, trending on ArtStation, masterpiece, concept art';
+                    break;
+                case 'realistic':
+                    styleDesc = 'Hyper-realistic photography style, ultra detailed textures, natural lighting, photorealistic';
+                    qualityTags = 'ultra HD, 8K resolution, professional photography, National Geographic style';
+                    break;
+                case 'anime':
+                    styleDesc = 'Anime art style, vibrant colors, dynamic pose, manga-inspired, Japanese animation aesthetic';
+                    qualityTags = 'studio quality, key visual, trending on Pixiv, by renowned anime studio';
+                    break;
+                case 'cyberpunk':
+                    styleDesc = 'Cyberpunk futuristic style, neon lights, tech-enhanced features, dystopian atmosphere, glowing circuits';
+                    qualityTags = 'cyberpunk 2077 style, blade runner aesthetic, sci-fi concept art';
+                    break;
+                case 'cartoon':
+                    styleDesc = 'Stylized cartoon game art, bold colors, exaggerated features, playful and dynamic';
+                    qualityTags = 'game character design, Pixar style, high quality 3D render';
+                    break;
+                case 'dark':
+                    styleDesc = 'Dark fantasy gothic art style, ominous atmosphere, horror elements, moody dramatic lighting, shadows';
+                    qualityTags = 'dark souls style, gothic horror art, atmospheric masterpiece';
+                    break;
+                case 'minimalist':
+                    styleDesc = 'Minimalist modern art style, clean lines, simple shapes, bold silhouette, geometric elements';
+                    qualityTags = 'vector art, flat design, contemporary digital art';
+                    break;
+                case 'watercolor':
+                    styleDesc = 'Watercolor painting style, soft brushstrokes, artistic texture, flowing colors, painted aesthetic';
+                    qualityTags = 'traditional art, watercolor illustration, art book quality';
+                    break;
+            }
+
+            const prompt = `A majestic and powerful ${style}, based on a ${animalBase}, ${elementDesc}. ${styleDesc}, highly detailed composition. Power level: ${creature.power}, Speed: ${creature.speed}. Aggressive and intimidating battle pose, suitable for game character design. ${qualityTags}`;
+            
+            return prompt;
+        }
+
+        // Global function for copy button
+        window.copyPrompt = function(index, button) {
+            const promptText = document.getElementById(`prompt-${index}`).textContent;
+            
+            navigator.clipboard.writeText(promptText).then(() => {
+                button.textContent = '✅ Copied!';
+                button.classList.add('copied');
                 
-                const rankSpan = document.createElement('span');
-                rankSpan.className = 'rank';
-                if (index === 0) rankSpan.textContent = '🥇';
-                else if (index === 1) rankSpan.textContent = '🥈';
-                else if (index === 2) rankSpan.textContent = '🥉';
-                else rankSpan.textContent = `${index + 1}.`;
-                
-                const scoreContent = document.createElement('div');
-                scoreContent.className = 'score-content';
-                
-                if (entry.image) {
-                    const img = document.createElement('img');
-                    img.className = 'score-image';
-                    img.src = entry.image;
-                    scoreContent.appendChild(img);
-                }
-                
-                const scoreSpan = document.createElement('span');
-                scoreSpan.className = 'score-value';
-                scoreSpan.textContent = entry.score.toLocaleString();
-                scoreContent.appendChild(scoreSpan);
-                
-                li.appendChild(rankSpan);
-                li.appendChild(scoreContent);
-                list.appendChild(li);
+                setTimeout(() => {
+                    button.textContent = '📋 Copy Prompt';
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                showMessage('❌ Failed to copy to clipboard');
             });
         }
-        
-        loadScores();
-        
-        let gameState = {
-            player: null,
-            playerImg: null,
-            playerImgSrc: null,
-            playerX: canvas.width / 2,
-            playerY: canvas.height / 2,
-            playerSize: 50,
-            poops: [],
-            score: 0,
-            dodged: 0,
-            gameActive: false,
-            gameOver: false
-        };
-        
-        // Drag and drop functionality
-        canvas.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            canvas.style.opacity = '0.7';
-        });
-        
-        canvas.addEventListener('dragleave', () => {
-            canvas.style.opacity = '1';
-        });
-        
-        canvas.addEventListener('drop', (e) => {
-            e.preventDefault();
-            canvas.style.opacity = '1';
+
+        window.copyTeamPrompt = function(button) {
+            const promptText = document.getElementById('teamPromptText').textContent;
             
-            const file = e.dataTransfer.files[0];
-            if (file && file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        gameState.playerImg = img;
-                        gameState.playerImgSrc = event.target.result;
-                        if (!gameState.gameActive) {
-                            startGame();
-                        }
-                    };
-                    img.src = event.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-        
-        // Mouse/Touch movement
-        canvas.addEventListener('mousemove', (e) => {
-            if (gameState.gameActive && !gameState.gameOver) {
-                const rect = canvas.getBoundingClientRect();
-                gameState.playerX = e.clientX - rect.left;
-                gameState.playerY = e.clientY - rect.top;
-            }
-        });
-        
-        canvas.addEventListener('touchmove', (e) => {
-            if (gameState.gameActive && !gameState.gameOver) {
-                e.preventDefault();
-                const rect = canvas.getBoundingClientRect();
-                const touch = e.touches[0];
-                gameState.playerX = touch.clientX - rect.left;
-                gameState.playerY = touch.clientY - rect.top;
-            }
-        });
-        
-        function startGame() {
-            gameState.gameActive = true;
-            gameState.gameOver = false;
-            gameState.score = 0;
-            gameState.dodged = 0;
-            gameState.poops = [];
-            document.getElementById('gameOver').style.display = 'none';
-            gameLoop();
-        }
-        
-        function spawnPoop() {
-            const side = Math.floor(Math.random() * 4); // 0: top, 1: right, 2: bottom, 3: left
-            let x, y, vx, vy;
-            const speed = 2 + Math.random() * 2;
-            
-            switch(side) {
-                case 0: // top
-                    x = Math.random() * canvas.width;
-                    y = -20;
-                    vx = (Math.random() - 0.5) * 2;
-                    vy = speed;
-                    break;
-                case 1: // right
-                    x = canvas.width + 20;
-                    y = Math.random() * canvas.height;
-                    vx = -speed;
-                    vy = (Math.random() - 0.5) * 2;
-                    break;
-                case 2: // bottom
-                    x = Math.random() * canvas.width;
-                    y = canvas.height + 20;
-                    vx = (Math.random() - 0.5) * 2;
-                    vy = -speed;
-                    break;
-                case 3: // left
-                    x = -20;
-                    y = Math.random() * canvas.height;
-                    vx = speed;
-                    vy = (Math.random() - 0.5) * 2;
-                    break;
-            }
-            
-            gameState.poops.push({ x, y, vx, vy, size: 30 });
-        }
-        
-        function drawPoop(x, y, size) {
-            ctx.fillStyle = '#8B4513';
-            ctx.beginPath();
-            ctx.ellipse(x, y + size * 0.2, size * 0.4, size * 0.3, 0, 0, Math.PI * 2);
-            ctx.fill();
-            
-            ctx.beginPath();
-            ctx.ellipse(x, y, size * 0.35, size * 0.4, 0, 0, Math.PI * 2);
-            ctx.fill();
-            
-            ctx.beginPath();
-            ctx.ellipse(x, y - size * 0.25, size * 0.3, size * 0.35, 0, 0, Math.PI * 2);
-            ctx.fill();
-        }
-        
-        function checkCollision(px, py, pSize, poopX, poopY, poopSize) {
-            const dx = px - poopX;
-            const dy = py - poopY;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            return distance < (pSize / 2 + poopSize / 2);
-        }
-        
-        function gameLoop() {
-            if (!gameState.gameActive || gameState.gameOver) return;
-            
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw sky gradient
-            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            gradient.addColorStop(0, '#87CEEB');
-            gradient.addColorStop(1, '#E0F6FF');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // Spawn poop randomly
-            if (Math.random() < 0.02 + gameState.score * 0.00001) {
-                spawnPoop();
-            }
-            
-            // Update and draw poops
-            gameState.poops = gameState.poops.filter(poop => {
-                poop.x += poop.vx;
-                poop.y += poop.vy;
+            navigator.clipboard.writeText(promptText).then(() => {
+                button.textContent = '✅ Copied!';
+                button.classList.add('copied');
                 
-                // Check if poop is out of bounds
-                if (poop.x < -50 || poop.x > canvas.width + 50 || 
-                    poop.y < -50 || poop.y > canvas.height + 50) {
-                    gameState.dodged++;
-                    return false;
-                }
-                
-                // Check collision
-                if (checkCollision(gameState.playerX, gameState.playerY, 
-                                   gameState.playerSize, poop.x, poop.y, poop.size)) {
-                    endGame();
-                    return true;
-                }
-                
-                drawPoop(poop.x, poop.y, poop.size);
-                return true;
+                setTimeout(() => {
+                    button.textContent = '📋 Copy Team Prompt';
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                showMessage('❌ Failed to copy to clipboard');
             });
+        }
+
+        function generateTeamPrompt() {
+            const creatures = canvasItems.filter(item => item.type === 'creature');
             
-            // Draw player
-            if (gameState.playerImg) {
-                ctx.save();
-                ctx.translate(gameState.playerX, gameState.playerY);
-                ctx.drawImage(gameState.playerImg, 
-                    -gameState.playerSize / 2, -gameState.playerSize / 2,
-                    gameState.playerSize, gameState.playerSize);
-                ctx.restore();
-            } else {
-                ctx.fillStyle = '#3498db';
-                ctx.beginPath();
-                ctx.arc(gameState.playerX, gameState.playerY, gameState.playerSize / 2, 0, Math.PI * 2);
-                ctx.fill();
+            if (creatures.length === 0) {
+                showMessage('❌ No creatures on canvas!');
+                return;
             }
+
+            if (creatures.length > 5) {
+                showMessage('⚠️ Too many creatures! Create a team of 5 first.');
+                return;
+            }
+
+            // Get selected art style
+            const selectedStyle = document.querySelector('input[name="artStyle"]:checked').value;
+            const styleName = getStyleName(selectedStyle);
+
+            // Build team description
+            let teamDescriptions = [];
+            let totalPower = 0;
+            let totalSpeed = 0;
+            let elementTypes = new Set();
+
+            creatures.forEach(creature => {
+                totalPower += creature.power;
+                totalSpeed += creature.speed;
+
+                // Detect element
+                let element = 'neutral';
+                if (creature.icon.includes('🔥') || creature.name.toLowerCase().includes('fire') || creature.name.toLowerCase().includes('flame')) {
+                    element = 'fire';
+                    elementTypes.add('fire');
+                } else if (creature.icon.includes('💧') || creature.name.toLowerCase().includes('water')) {
+                    element = 'water';
+                    elementTypes.add('water');
+                } else if (creature.icon.includes('🌍') || creature.name.toLowerCase().includes('earth') || creature.name.toLowerCase().includes('stone')) {
+                    element = 'earth';
+                    elementTypes.add('earth');
+                } else if (creature.icon.includes('💨') || creature.name.toLowerCase().includes('air') || creature.name.toLowerCase().includes('wind')) {
+                    element = 'air';
+                    elementTypes.add('air');
+                } else if (creature.icon.includes('⚡') || creature.name.toLowerCase().includes('thunder') || creature.name.toLowerCase().includes('lightning')) {
+                    element = 'lightning';
+                    elementTypes.add('lightning');
+                } else if (creature.icon.includes('☠️') || creature.name.toLowerCase().includes('poison') || creature.name.toLowerCase().includes('toxic')) {
+                    element = 'poison';
+                    elementTypes.add('poison');
+                } else if (creature.icon.includes('🌋') || creature.name.toLowerCase().includes('lava') || creature.name.toLowerCase().includes('magma')) {
+                    element = 'lava';
+                    elementTypes.add('lava');
+                }
+
+                const animalBase = creature.name.split(' ').pop().toLowerCase();
+                teamDescriptions.push(`a ${creature.name} (${element}-type ${animalBase}, power ${creature.power}, speed ${creature.speed})`);
+            });
+
+            // Art style descriptions
+            let styleDesc = '';
+            let qualityTags = '';
             
-            gameState.score++;
-            document.getElementById('score').textContent = gameState.score;
-            document.getElementById('dodged').textContent = gameState.dodged;
-            
-            requestAnimationFrame(gameLoop);
+            switch(selectedStyle) {
+                case 'fantasy':
+                    styleDesc = 'Epic high fantasy art style, magical atmosphere, dramatic cinematic lighting';
+                    qualityTags = '8K quality, masterpiece, trending on ArtStation';
+                    break;
+                case 'realistic':
+                    styleDesc = 'Hyper-realistic style with ultra detailed textures and natural lighting';
+                    qualityTags = 'ultra HD, 8K resolution, photorealistic';
+                    break;
+                case 'anime':
+                    styleDesc = 'Anime art style with vibrant colors and dynamic composition';
+                    qualityTags = 'studio quality, key visual, trending on Pixiv';
+                    break;
+                case 'cyberpunk':
+                    styleDesc = 'Cyberpunk futuristic style with neon lights and tech enhancements';
+                    qualityTags = 'cyberpunk aesthetic, sci-fi concept art';
+                    break;
+                case 'cartoon':
+                    styleDesc = 'Stylized cartoon game art with bold colors and exaggerated features';
+                    qualityTags = 'game character design, high quality 3D render';
+                    break;
+                case 'dark':
+                    styleDesc = 'Dark fantasy gothic art style with ominous atmosphere and dramatic shadows';
+                    qualityTags = 'dark souls style, gothic horror masterpiece';
+                    break;
+                case 'minimalist':
+                    styleDesc = 'Minimalist modern art style with clean lines and bold silhouettes';
+                    qualityTags = 'vector art, contemporary digital art';
+                    break;
+                case 'watercolor':
+                    styleDesc = 'Watercolor painting style with soft brushstrokes and flowing colors';
+                    qualityTags = 'traditional art, watercolor illustration';
+                    break;
+            }
+
+            const teamPrompt = `An epic team composition featuring ${creatures.length} powerful elemental creatures standing together in a battle-ready formation: ${teamDescriptions.join(', ')}. ${styleDesc}, all creatures are displayed prominently in a unified group pose showing their unique elemental powers and characteristics. Dynamic composition with each creature clearly visible and showcasing their individual abilities. Team total power: ${totalPower}, total speed: ${totalSpeed}. Heroic group shot, intimidating presence, ready for battle. ${qualityTags}. Wide shot showing the entire team.`;
+
+            // Display the team prompt
+            const teamPromptDisplay = document.getElementById('teamPromptDisplay');
+            const teamPromptText = document.getElementById('teamPromptText');
+            const teamIconsDisplay = document.getElementById('teamIconsDisplay');
+            const teamCompositionInfo = document.getElementById('teamCompositionInfo');
+
+            teamPromptDisplay.style.display = 'block';
+            teamPromptText.textContent = teamPrompt;
+            teamIconsDisplay.textContent = creatures.map(c => c.icon).join(' ');
+            teamCompositionInfo.textContent = `${creatures.length} creatures | 💪 ${totalPower} Power | ⚡ ${totalSpeed} Speed | 🎨 ${styleName} Style`;
+
+            showMessage(`🏆 Team composition prompt generated!`);
+            teamPromptDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
-        
-        function endGame() {
-            gameState.gameOver = true;
-            saveScore(gameState.score);
-            document.getElementById('finalScore').textContent = gameState.score;
-            document.getElementById('finalDodged').textContent = gameState.dodged;
-            document.getElementById('gameOver').style.display = 'block';
-        }
-        
-        function restartGame() {
-            gameState.playerX = canvas.width / 2;
-            gameState.playerY = canvas.height / 2;
-            startGame();
-        }
-        
-        function newGame() {
-            gameState.gameActive = false;
-            gameState.gameOver = true;
-            gameState.playerImg = null;
-            gameState.playerImgSrc = null;
-            gameState.poops = [];
-            gameState.score = 0;
-            gameState.dodged = 0;
-            document.getElementById('score').textContent = '0';
-            document.getElementById('dodged').textContent = '0';
-            document.getElementById('gameOver').style.display = 'none';
-            
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#333';
-            ctx.font = '24px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('Drag & Drop a new image to start!', canvas.width / 2, canvas.height / 2);
-        }
-        
-        // Initial prompt
-        ctx.fillStyle = '#333';
-        ctx.font = '24px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText('Drag & Drop an image here to start!', canvas.width / 2, canvas.height / 2);
     </script>
 </body>
 </html>
